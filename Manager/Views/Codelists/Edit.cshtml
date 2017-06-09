@@ -1,0 +1,29 @@
+﻿@model CatalogModel.ICodelist
+
+<form class="list-group-item" method="post" action="~/Codelists/Save">
+	<input type="hidden" value="@Model.Name" name="Name" />
+	@if (Model.Parent != null)
+	{
+		<input type="hidden" value="@Model.Parent.ID" name="ParentID" />
+		<input type="hidden" value="@Model.Parent.Name" name="ParentName" />
+	}
+	<input type="hidden" value="@Model.ID" name="ID" />
+	<input type="hidden" value="@Model.Name" name="TypeName" />
+	<div class="row">
+		<div class="col-sm-3">
+			<input class="form-control" type="text" name="ShortDescription" value="@Model.ShortDescription" />
+		</div>
+		<div class="col-lg-4">
+			<input class="form-control" type="text" multiple name="LongDescription" value="@Model.LongDescription"/>
+		</div>
+		<div class="col-sm-1">
+			<input class="form-control" type="text" name="CodelistNumber" value="@Model.CodelistNumber"/>
+		</div>
+		<div class="col-sm-1">
+			<input class="form-control" type="text" name="SortOrder" value="@Model.SortOrder"/>
+		</div>
+		<div class="col-sm-1 pull-right">
+			<input class="form-control btn-info" type="submit" title="@("Save " + Model.Name)" value="Save" />
+		</div>
+	</div>
+</form>

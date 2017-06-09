@@ -1,0 +1,142 @@
+﻿@using CatalogModel
+@model List<ICodelist>
+
+<h2>@ViewBag.Title</h2>
+
+<div class="list-group">
+	@DrawHeaders("")
+	@ChildList(Model, 0, null, 0)
+</div>
+
+<script>
+	$(document).ready(function () {
+		$("a.edit").on({
+			click: function (e) {
+				e.preventDefault();
+				console.log($(this).parent().parent())
+
+				var url = "Codelists/Edit?id=" + $(this).attr('id');
+				httpGetAsync(url, gotEditor, $(this).parent().parent());
+			},
+			contextmenu: function (e) {
+				//e.preventDefault();
+			}
+		});
+		$("a.delete").on({
+			click: function (e) {
+				if (!confirm("Delete. Are you shure?")) {
+					e.preventDefault();
+					//var url = "Codelists/Delete?id=" + $(this).attr('id') + "&n=" + $(this).attr('name');
+					//httpGetAsync(url);
+				}
+			}
+		});
+	});
+
+	function gotEditor(data, elem) {
+		elem.get(0).innerHTML = data;
+	}
+
+	function httpGetAsync(theUrl, callback, params) {
+		var xmlHttp = new XMLHttpRequest();
+		xmlHttp.onreadystatechange = function () {
+			if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+				callback(xmlHttp.responseText, params);
+		}
+		xmlHttp.open("GET", theUrl, true); // true for asynchronous
+		xmlHttp.send(null);
+	}
+</script>
+
+@helper ChildList(List<ICodelist> codelists, int depth, string parentName, int pid)
+{
+	foreach (var m in codelists)
+	{
+		if (m.Childs != null)
+		{
+			<div id="@m.ID" class="row list-group-item list-group-item-info center-block">
+				<div class="list-group-item-heading list-group-item-info text-left">@m.Name</div>
+				<div class="row">
+					<div class="col-sm-3">
+						<h4>@m.ShortDescription</h4>
+					</div>
+					<div class="col-sm-4">
+						@m.LongDescription
+					</div>
+					<div class="col-sm-1 text-right">
+						@m.CodelistNumber
+					</div>
+					<div class="col-sm-1 text-right">
+						@m.SortOrder
+					</div>
+				</div>
+				@ChildList(m.Childs, depth + 1, m.Name, m.ID)
+			</div>
+		}
+		else
+		{
+			<div id="@m.ID" class="row list-group-item btn-default center-block">
+				<div class="col-sm-3">
+					@m.ShortDescription
+				</div>
+				<div class="col-lg-4">
+					@m.LongDescription
+				</div>
+				<div class="col-sm-1 text-right">
+					@m.CodelistNumber
+				</div>
+				<div class="col-sm-1 text-right">
+					@m.SortOrder
+				</div>
+				<div class="col-sm-3 text-right">
+					@Html.ActionLink("Edit", "Edit", new { n = ViewBag.Title, id = m.ID }, new { @class = "edit", @id = ViewBag.Title+"_"+ m.ID }) | @Html.ActionLink("Delete", "Delete", new { n = m.Name, id = m.ID }, new { @class = "delete", @id = m.ID, @name = ViewBag.Title })
+				</div>
+			</div>
+		}	
+	}
+
+		<form class="list-group-item-success" method="post" action="~/Codelists/Add">
+			<input type="hidden" value="@ViewBag.Title" name="n" />
+			<input type="hidden" value="@pid" name="parentID" />
+			<input type="hidden" value="@parentName" name="parentName" />
+			<input type="hidden" value="@ViewBag.Names[ViewBag.NamesCount - depth]" name="typeName" />
+			<div class="row">
+				<div class="col-sm-3">
+					<input class="form-control"  type="text" name="shortDescription" />
+				</div>
+				<div class="col-lg-4">
+					<input class="form-control" type="text" multiple name="longDescription" />
+				</div>
+				<div class="col-sm-1">
+					<input class="form-control"  type="text" name="codelistNumber" />
+				</div>
+				<div class="col-sm-1">
+					<input class="form-control"  type="text" name="sortOrder" />
+				</div>
+				<div class="col-sm-1 pull-right">
+					<input class="form-control btn-success" type="submit" title="@("Add " + (string)ViewBag.Names[ViewBag.NamesCount - depth])" value="+" />
+				</div>
+			</div>
+		</form>
+		@*@Html.ActionLink("Add " + (string)ViewBag.Names[ViewBag.NamesCount - depth], "Add", new { n = ViewBag.Names[ViewBag.NamesCount - depth] , p = parentName, pid = pid })*@
+		@*<div class="list-group-item">
+		</div>*@
+}
+
+@helper DrawHeaders(string name)
+{
+	<div class="row list-group-item-heading">
+		<div class="col-sm-3">
+			<b>@name <br>ShortDescription</b>
+		</div>
+		<div class="col-sm-4">
+			<b>@name <br>LongDescription</b>
+		</div>
+		<div class="col-sm-1 text-right">
+			<b>Codelist Number</b>
+		</div>
+		<div class="col-sm-1 text-right">
+			<b>Sort Order</b>
+		</div>
+	</div>
+}

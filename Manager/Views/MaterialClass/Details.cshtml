@@ -1,0 +1,152 @@
+﻿@model CatalogModel.MaterialClass.Piping.PipingMaterialsClassData
+
+@{
+	ViewBag.Title = "Details";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+	<h4>PipingMaterialsClassData</h4>
+	<hr />
+	<dl class="dl-horizontal">
+		<dt>
+			@Html.DisplayNameFor(model => model.SpecName)
+		</dt>
+
+		<dd>
+			@Html.DisplayFor(model => model.SpecName)
+		</dd>
+
+
+		<dt>
+			@Html.DisplayNameFor(model => model.MaterialsOfConstructionClass)
+		</dt>
+
+		<dd>
+			@if (Model.MaterialsOfConstructionClass != null)
+			{
+				@Html.DisplayFor(model => model.MaterialsOfConstructionClass.LongDescription)
+			}
+		</dd>
+
+
+		<dt>
+			@Html.DisplayNameFor(model => model.MaterialsDescription)
+		</dt>
+
+		<dd>
+			@Html.DisplayFor(model => model.MaterialsDescription)
+		</dd>
+
+		<dt>
+			@Html.DisplayNameFor(model => model.FluidService)
+		</dt>
+
+		<dd>
+			@Html.DisplayFor(model => model.FluidService)
+		</dd>
+
+		<dt>
+			@Html.DisplayNameFor(model => model.Comments)
+		</dt>
+
+		<dd>
+			@Html.DisplayFor(model => model.Comments)
+		</dd>
+
+		<dt>
+			@Html.DisplayNameFor(model => model.RevisionNumber)
+		</dt>
+
+		<dd>
+			@Html.DisplayFor(model => model.RevisionNumber)
+		</dd>
+
+		<dt>
+			@Html.DisplayNameFor(model => model.ApprovedBy)
+		</dt>
+
+		<dd>
+			@Html.DisplayFor(model => model.ApprovedBy)
+		</dd>
+
+		<dt>
+			@Html.DisplayNameFor(model => model.ApprovalDate)
+		</dt>
+
+		<dd>
+			@Html.DisplayFor(model => model.ApprovalDate)
+		</dd>
+
+		<dt>
+			@Html.DisplayNameFor(model => model.JacketMatOfConstructionClass)
+		</dt>
+
+		<dd>
+			@Html.DisplayFor(model => model.JacketMatOfConstructionClass)
+		</dd>
+
+		<dt>
+			@Html.DisplayNameFor(model => model.JumperMatOfConstructionClass)
+		</dt>
+
+		<dd>
+			@Html.DisplayFor(model => model.JumperMatOfConstructionClass)
+		</dd>
+
+		<dt>
+			@Html.DisplayNameFor(model => model.JacketMaterialsDescription)
+		</dt>
+
+		<dd>
+			@Html.DisplayFor(model => model.JacketMaterialsDescription)
+		</dd>
+
+		<dt>
+			@Html.DisplayNameFor(model => model.JumperMaterialsDescription)
+		</dt>
+
+		<dd>
+			@Html.DisplayFor(model => model.JumperMaterialsDescription)
+		</dd>
+
+		<dt>
+			@Html.DisplayNameFor(model => model.JacketAndJumperFluidService)
+		</dt>
+
+		<dd>
+			@Html.DisplayFor(model => model.JacketAndJumperFluidService)
+		</dd>
+
+		<dt>
+			@Html.DisplayNameFor(model => model.HyperlinkToHumanSpec)
+		</dt>
+
+		<dd>
+			@Html.DisplayFor(model => model.HyperlinkToHumanSpec)
+		</dd>
+
+		<dt>
+			@Html.DisplayNameFor(model => model.PipingNote1)
+		</dt>
+
+		<dd>
+			@Html.DisplayFor(model => model.PipingNote1)
+		</dd>
+
+		<dt>
+			@Html.DisplayNameFor(model => model.WeldingProcedureSpecification)
+		</dt>
+
+		<dd>
+			@Html.DisplayFor(model => model.WeldingProcedureSpecification)
+		</dd>
+
+	</dl>
+</div>
+<p>
+	@Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+	@Html.ActionLink("Back to List", "Index")
+</p>

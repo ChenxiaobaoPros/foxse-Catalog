@@ -1,0 +1,39 @@
+﻿@using CatalogModel
+@model IEnumerable<IGrouping<string, string[]>>
+@{
+	ViewBag.Title = "Каталог Smart3D";
+}
+
+<div class="row">
+	@foreach (var kvp in Model)
+	{
+		<div class="row">
+
+			@foreach (var g2 in kvp.GroupBy(n => n[1]).OrderBy(n=>n.Key))
+			{
+				<div class="col-md-3">
+					<h2>@g2.Key</h2>
+					@foreach (var name in g2.OrderBy(n => n[n.Length - 1]))
+					{
+						if (name.Length > 3)
+						{
+							foreach (var g3 in g2.GroupBy(n => n[2]).OrderBy(n => n.Key))
+							{
+								<h3>@g3.Key</h3>
+								foreach (var nam in g3.OrderBy(n => n[n.Length - 1]))
+								{
+									<a href="/@g2.Key?n=@nam[nam.Length - 1]">@nam[nam.Length - 1]</a><br>
+								}
+							}
+							break;
+						}
+						else
+						{
+							<a href="/@g2.Key?n=@name[name.Length - 1]">@name[name.Length - 1]</a><br>
+						}
+					}
+				</div>
+			}
+		</div>
+	}
+</div>

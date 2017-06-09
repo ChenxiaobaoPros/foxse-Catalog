@@ -1,0 +1,55 @@
+﻿@using CatalogModel
+@model List<object>
+
+@{
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	var type = (Type)ViewBag.Type;
+}
+
+<h2>Index</h2>
+
+<p>
+	@Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+	<tr>
+		@foreach (var item in type.GetProperties())
+		{
+			<th class="vertical">
+				<div>@Html.DisplayName(item.Name)</div>
+			</th>
+		}
+		<th width="5%"></th>
+	</tr>
+
+	@foreach (var item in Model)
+	{
+		var itemID = type.GetProperty("ID").GetValue(item);
+
+		<tr>
+
+			@foreach (var prop in type.GetProperties())
+			{
+				var value = type.GetProperty(prop.Name).GetValue(item);
+			<td>
+				@if (value is ICodelist)
+				{
+					@Html.Label((value == null) ? "" : ((ICodelist)value).ID.ToString())
+				}
+				else
+				{
+					@Html.Label((value == null) ? "" : value.ToString())
+				}
+			</td>
+			}
+			<td>
+				@Html.ActionLink("Edit", "Edit", new { id = itemID })
+				@Html.ActionLink("Details", "Details", new { id = itemID })
+				@Html.ActionLink("Delete", "Delete", new { id = itemID })
+			</td>
+		</tr>
+	}
+
+</table>
+
