@@ -48,11 +48,15 @@ namespace Manager.Controllers
 		}
 
 		// GET: PipingMaterialsClassData/Create
-		public ActionResult Create()
+		public ActionResult Create(string tn)
 		{
+			var type = _types.Where(t => t.Name == tn).SingleOrDefault();
+
+			var tt = Activator.CreateInstance(type);
+
 			ViewBag.Selects = GetSelects();
-			ViewBag.TypeName = "PipingMaterialsClassData";
-			return View();
+			ViewBag.TypeName = tn;
+			return View(tt);
 		}
 
 		private Dictionary<string, List<SelectListItem>> GetSelects()

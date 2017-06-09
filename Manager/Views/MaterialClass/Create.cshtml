@@ -1,235 +1,57 @@
-﻿@model Manager.Models.PipingMaterialsClassDataViewModel
+﻿@model object
 
 @{
-    ViewBag.Title = "Create";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewBag.Title = "Create";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 	var Selects = (Dictionary<string, List<SelectListItem>>)ViewBag.Selects;
+	var type = Model.GetType();
 }
 
 <h2>Create</h2>
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>PipingMaterialsClassData</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+	@Html.AntiForgeryToken()
+
+	<div class="form-horizontal">
+		<h4>PipingMaterialsClassData</h4>
+		<hr />
+		@Html.ValidationSummary(true, "", new { @class = "text-danger" })
 		@Html.Hidden("typeName", (string)ViewBag.TypeName)
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.SpecName, htmlAttributes: new { @class = "control-label col-md-3" })
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.SpecName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.SpecName, "", new { @class = "text-danger" })
-            </div>
-        </div>
+		@foreach (var prop in type.GetProperties())
+		{
+			var val = type.GetProperty(prop.Name).GetValue(Model);
+
+			if (Selects.ContainsKey(prop.Name))
+			{
+				<div class="form-group">
+					@Html.Label(prop.Name, htmlAttributes: new { @class = "control-label col-md-3" })
+					<div class="col-md-9 dropdown">
+						@Html.DropDownList(prop.Name, Selects["MaterialsOfConstructionClass"], "", new { htmlAttributes = new { @class = "form-control" } })
+					</div>
+				</div>
+			}
+			else
+			{
+				<div class="form-group">
+					@Html.Label(prop.Name, htmlAttributes: new { @class = "control-label col-md-3" })
+					<div class="col-md-9">
+						<input class="form-control" type="text" name="@prop.Name" value="@val" />
+						@Html.ValidationMessage(prop.Name, "", new { @class = "text-danger" })
+					</div>
+				</div>
+			}
+		}
 
 		<div class="form-group">
-			@Html.LabelFor(model => model.MaterialsOfConstructionClass, htmlAttributes: new { @class = "control-label col-md-3" })
-			<div class="col-md-9 dropdown">
-				@Html.DropDownListFor(model => model.MaterialsOfConstructionClass, Selects["MaterialsOfConstructionClass"], "" , new { htmlAttributes = new { @class = "form-control" } })
+			<div class="col-md-offset-2 col-md-9">
+				<input type="submit" value="Create" class="btn btn-default" />
 			</div>
 		</div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.MaterialsDescription, htmlAttributes: new { @class = "control-label col-md-3" })
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.MaterialsDescription, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.MaterialsDescription, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.FluidService, htmlAttributes: new { @class = "control-label col-md-3" })
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.FluidService, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.FluidService, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-		<div class="form-group">
-			@Html.LabelFor(model => model.DesignStandard, htmlAttributes: new { @class = "control-label col-md-3" })
-			<div class="col-md-9 dropdown">
-				@Html.DropDownListFor(model => model.DesignStandard, Selects["DesignStandard"], "", new { htmlAttributes = new { @class = "form-control" } })
-			</div>
-		</div>
-
-		<div class="form-group">
-			@Html.LabelFor(model => model.AutomatedFlangeSelectionOption, htmlAttributes: new { @class = "control-label col-md-3" })
-			<div class="col-md-9">
-				@Html.DropDownListFor(model => model.AutomatedFlangeSelectionOption, Selects["AutomatedFlangeSelectionOption"], "", new { htmlAttributes = new { @class = "form-control" } })
-			</div>
-		</div>
-
-		<div class="form-group">
-			@Html.LabelFor(model => model.PipingCommodityOverrideOption, htmlAttributes: new { @class = "control-label col-md-3" })
-			<div class="col-md-9">
-				@Html.DropDownListFor(model => model.PipingCommodityOverrideOption, Selects["PipingCommodityOverrideOption"], "", new { htmlAttributes = new { @class = "form-control" } })
-			</div>
-		</div>
-
-		<div class="form-group">
-			@Html.LabelFor(model => model.WasherCreationOption, htmlAttributes: new { @class = "control-label col-md-3" })
-			<div class="col-md-9">
-				@Html.DropDownListFor(model => model.WasherCreationOption, Selects["WasherCreationOption"], "", new { htmlAttributes = new { @class = "form-control" } })
-			</div>
-		</div>
-
-		<div class="form-group">
-			@Html.LabelFor(model => model.LiningMaterial, htmlAttributes: new { @class = "control-label col-md-3" })
-			<div class="col-md-9">
-				@Html.DropDownListFor(model => model.LiningMaterial, Selects["LiningMaterial"], "", new { htmlAttributes = new { @class = "form-control" } })
-			</div>
-		</div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Comments, htmlAttributes: new { @class = "control-label col-md-3" })
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.Comments, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Comments, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.RevisionNumber, htmlAttributes: new { @class = "control-label col-md-3" })
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.RevisionNumber, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.RevisionNumber, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ApprovedBy, htmlAttributes: new { @class = "control-label col-md-3" })
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.ApprovedBy, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ApprovedBy, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ApprovalDate, htmlAttributes: new { @class = "control-label col-md-3" })
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.ApprovalDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ApprovalDate, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.JacketMatOfConstructionClass, htmlAttributes: new { @class = "control-label col-md-3" })
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.JacketMatOfConstructionClass, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.JacketMatOfConstructionClass, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.JumperMatOfConstructionClass, htmlAttributes: new { @class = "control-label col-md-3" })
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.JumperMatOfConstructionClass, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.JumperMatOfConstructionClass, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.JacketMaterialsDescription, htmlAttributes: new { @class = "control-label col-md-3" })
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.JacketMaterialsDescription, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.JacketMaterialsDescription, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.JumperMaterialsDescription, htmlAttributes: new { @class = "control-label col-md-3" })
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.JumperMaterialsDescription, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.JumperMaterialsDescription, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.JacketAndJumperFluidService, htmlAttributes: new { @class = "control-label col-md-3" })
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.JacketAndJumperFluidService, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.JacketAndJumperFluidService, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-		<div class="form-group">
-			@Html.LabelFor(model => model.StressRelief, htmlAttributes: new { @class = "control-label col-md-3" })
-			<div class="col-md-9">
-				@Html.DropDownListFor(model => model.StressRelief, Selects["StressRelief"], "", new { htmlAttributes = new { @class = "form-control" } })
-			</div>
-		</div>
-
-		<div class="form-group">
-			@Html.LabelFor(model => model.Examination, htmlAttributes: new { @class = "control-label col-md-3" })
-			<div class="col-md-9">
-				@Html.DropDownListFor(model => model.Examination, Selects["Examination"], "", new { htmlAttributes = new { @class = "form-control" } })
-			</div>
-		</div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.HyperlinkToHumanSpec, htmlAttributes: new { @class = "control-label col-md-3" })
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.HyperlinkToHumanSpec, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.HyperlinkToHumanSpec, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.PipingNote1, htmlAttributes: new { @class = "control-label col-md-3" })
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.PipingNote1, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.PipingNote1, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-		<div class="form-group">
-			@Html.LabelFor(model => model.GasketRequirementOverride, htmlAttributes: new { @class = "control-label col-md-3" })
-			<div class="col-md-9">
-				@Html.DropDownListFor(model => model.GasketRequirementOverride, Selects["GasketRequirementOverride"], "", new { htmlAttributes = new { @class = "form-control" } })
-			</div>
-		</div>
-
-		<div class="form-group">
-			@Html.LabelFor(model => model.StressReliefRequirement, htmlAttributes: new { @class = "control-label col-md-3" })
-			<div class="col-md-9">
-				@Html.DropDownListFor(model => model.StressReliefRequirement, Selects["StressReliefRequirement"], "", new { htmlAttributes = new { @class = "form-control" } })
-			</div>
-		</div>
-
-		<div class="form-group">
-			@Html.LabelFor(model => model.MaterialsGroup, htmlAttributes: new { @class = "control-label col-md-3" })
-			<div class="col-md-9">
-				@Html.DropDownListFor(model => model.MaterialsGroup, Selects["MaterialsGroup"], "", new { htmlAttributes = new { @class = "form-control" } })
-			</div>
-		</div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.WeldingProcedureSpecification, htmlAttributes: new { @class = "control-label col-md-3" })
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.WeldingProcedureSpecification, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.WeldingProcedureSpecification, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-		<div class="form-group">
-			@Html.LabelFor(model => model.MaterialsType, htmlAttributes: new { @class = "control-label col-md-3" })
-			<div class="col-md-9">
-				@Html.DropDownListFor(model => model.MaterialsType, Selects["MaterialsType"], "", new { htmlAttributes = new { @class = "form-control" } })
-			</div>
-		</div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-9">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
-        </div>
-    </div>
+	</div>
 }
 
 <div>
-    @Html.ActionLink("Back to List", "Index")
+	@Html.ActionLink("Back to List", "Index", new { n = type.Name })
 </div>
