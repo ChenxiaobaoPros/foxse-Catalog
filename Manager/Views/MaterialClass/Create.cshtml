@@ -1,10 +1,10 @@
-﻿@model object
+﻿@model Manager.Models.MaterialClassViewModel
 
 @{
 	ViewBag.Title = "Create";
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	var Selects = (Dictionary<string, List<SelectListItem>>)ViewBag.Selects;
-	var type = Model.GetType();
+	var Selects = Model.Selects;
+	var type = Model.Item.GetType();
 }
 
 <h2>Create</h2>
@@ -13,26 +13,27 @@
 {
 	@Html.AntiForgeryToken()
 
+	@*@Helpers.GenerateEditor(type, Selects)*@
 	<div class="form-horizontal">
-		<h4>PipingMaterialsClassData</h4>
+		<h4>@Model.TypeName</h4>
 		<hr />
 		@Html.ValidationSummary(true, "", new { @class = "text-danger" })
-		@Html.Hidden("typeName", (string)ViewBag.TypeName)
+		@Html.Hidden("typeName", Model.TypeName)
 
 		@foreach (var prop in type.GetProperties())
 		{
-			var val = type.GetProperty(prop.Name).GetValue(Model);
+			var val = type.GetProperty(prop.Name).GetValue(Model.Item);
 
 			if (Selects.ContainsKey(prop.Name))
 			{
 				<div class="form-group">
 					@Html.Label(prop.Name, htmlAttributes: new { @class = "control-label col-md-3" })
 					<div class="col-md-9 dropdown">
-						@Html.DropDownList(prop.Name, Selects["MaterialsOfConstructionClass"], "", new { htmlAttributes = new { @class = "form-control" } })
+						@Html.DropDownList(prop.Name, Selects[prop.Name], "", new { htmlAttributes = new { @class = "form-control" } })
 					</div>
 				</div>
 			}
-			else
+			else if (prop.Name.ToUpper() != "ID")
 			{
 				<div class="form-group">
 					@Html.Label(prop.Name, htmlAttributes: new { @class = "control-label col-md-3" })
@@ -53,5 +54,5 @@
 }
 
 <div>
-	@Html.ActionLink("Back to List", "Index", new { n = type.Name })
+	@Html.ActionLink("Back to List", "Index", new { n = Model.TypeName })
 </div>

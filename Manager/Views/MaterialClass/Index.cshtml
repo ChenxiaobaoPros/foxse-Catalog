@@ -7,7 +7,7 @@
 	var type = (Type)ViewBag.Type;
 }
 
-<h2>Index</h2>
+<h2>@type.Name</h2>
 
 <p>
 	@Html.ActionLink("Create New", "Create", new { tn = type.Name })

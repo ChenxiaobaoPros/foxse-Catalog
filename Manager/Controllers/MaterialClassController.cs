@@ -54,30 +54,35 @@ namespace Manager.Controllers
 
 			var tt = Activator.CreateInstance(type);
 
-			ViewBag.Selects = GetSelects();
+			var selects = GetSelects(type, tt);
 			ViewBag.TypeName = tn;
-			return View(tt);
+			return View(new MaterialClassViewModel() { Selects = selects, Item = tt, TypeName = tn });
 		}
 
-		private Dictionary<string, List<SelectListItem>> GetSelects()
+		private Dictionary<string, List<SelectListItem>> GetSelects(Type type, object obj)
 		{
 			var selects = new Dictionary<string, List<SelectListItem>>();
-			foreach (MethodInfo item in typeof(PipingMaterialsClassData).GetMethods())
+			foreach (PropertyInfo item in type.GetProperties())
 			{
-				if (/*item.IsVirtual && */item.ReturnType.GetInterface("ICodelist") != null)
+				var itemType = item.PropertyType;
+
+				if (/*item.IsVirtual && */itemType.GetInterface("ICodelist") != null)
 				{
-					var set = db.Set(item.ReturnType);
+					var val = item.GetValue(obj);
+
+					var set = db.Set(itemType);
 					var sli = new List<SelectListItem>();
 					foreach (ICodelist i in set)
 					{
 						sli.Add(new SelectListItem()
 						{
+							Selected = (val == i),
 							Text = i.LongDescription,
 							Value = i.ID.ToString()
 						});
 					}
-					if (!selects.ContainsKey(item.ReturnType.Name))
-						selects.Add(item.ReturnType.Name, sli);
+					if (!selects.ContainsKey(itemType.Name))
+						selects.Add(itemType.Name, sli);
 				}
 			}
 			return selects;
@@ -142,44 +147,115 @@ namespace Manager.Controllers
 				db.Set(type).Add(tt);
 
 				db.SaveChanges();
-				return RedirectToAction("Index");
+				return RedirectToAction("Index", new { n = typeName });
 			}
 
 			return View(mc);
 		}
 
 		// GET: PipingMaterialsClassDatas/Edit/5
-		public ActionResult Edit(int? id)
+		public ActionResult Edit(int? id, string tn)
 		{
-			ViewBag.Selects = GetSelects();
-
 			if (id == null)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			PipingMaterialsClassData pipingMaterialsClassData = db.PipingMaterialsClassData.Find(id);
-			if (pipingMaterialsClassData == null)
+
+			var type = _types.Where(t => t.Name == tn).SingleOrDefault();
+
+			var tt = db.Set(type).Find(new object[] { id });
+
+			if (tt == null)
 			{
 				return HttpNotFound();
 			}
-			return View(pipingMaterialsClassData);
+
+			var selects = GetSelects(type, tt);
+
+			return View(new MaterialClassViewModel() { Selects = selects, Item = tt, TypeName = tn });
 		}
 
-		// POST: PipingMaterialsClassDatas/Edit/5
-		// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+		//// POST: PipingMaterialsClassDatas/Edit/5
+		//// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+		//// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+		//[HttpPost]
+		//[ValidateAntiForgeryToken]
+		//public ActionResult Edit(/*[Bind(Include = "ID,SpecName,MaterialsDescription,FluidService,Comments,RevisionNumber,ApprovedBy,ApprovalDate,JacketMatOfConstructionClass,JumperMatOfConstructionClass,JacketMaterialsDescription,JumperMaterialsDescription,JacketAndJumperFluidService,HyperlinkToHumanSpec,PipingNote1,WeldingProcedureSpecification")] */
+		//	PipingMaterialsClassData pipingMaterialsClassData)
+		//{
+		//	if (ModelState.IsValid)
+		//	{
+		//		db.Entry(pipingMaterialsClassData).State = EntityState.Modified;
+		//		db.SaveChanges();
+		//		return RedirectToAction("Index");
+		//	}
+		//	return View(pipingMaterialsClassData);
+		//}
+
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ActionResult Edit(/*[Bind(Include = "ID,SpecName,MaterialsDescription,FluidService,Comments,RevisionNumber,ApprovedBy,ApprovalDate,JacketMatOfConstructionClass,JumperMatOfConstructionClass,JacketMaterialsDescription,JumperMaterialsDescription,JacketAndJumperFluidService,HyperlinkToHumanSpec,PipingNote1,WeldingProcedureSpecification")] */
-			PipingMaterialsClassData pipingMaterialsClassData)
+		public async Task<ActionResult> Edit(object mc)
 		{
 			if (ModelState.IsValid)
 			{
-				db.Entry(pipingMaterialsClassData).State = EntityState.Modified;
+				var typeName = Request.Form["typeName"];
+				var id = 0;
+
+				if (!int.TryParse(Request.Form["ID"], out id))
+					return RedirectToAction("Create", new { tn = typeName });
+
+				var type = _types.Where(t => t.Name == typeName).SingleOrDefault();
+
+				//var args = new object[] { mc };
+
+				var tt = await db.Set(type).FindAsync(new object[] { id } );
+
+				foreach (var item in type.GetProperties())
+				{
+					var ipt = item.PropertyType;
+					if (ipt.GetInterface("ICodelist") != null)
+					{
+						int parsed = 0;
+						if (int.TryParse(Request.Form[item.Name], out parsed))
+						{
+							var value = await db.Set(ipt).FindAsync(new object[] { parsed });
+							item.SetValue(tt, value);
+						}
+						else
+						{
+							item.SetValue(tt, null);
+						}
+					}
+					else
+					{
+						switch (ipt.Name)
+						{
+							case "String":
+								item.SetValue(tt, Request.Form[item.Name]);
+								break;
+							case "Nullable1":
+								DateTime odt;
+								if (DateTime.TryParse(Request.Form[item.Name], out odt))
+								{
+									item.SetValue(tt, odt);
+								}
+								else
+								{
+									item.SetValue(tt, null);
+								}
+								break;
+						}
+
+					}
+				}
+
+				db.Entry(tt).State = EntityState.Modified;
+
 				db.SaveChanges();
-				return RedirectToAction("Index");
+				return RedirectToAction("Index", new { n = typeName });
 			}
-			return View(pipingMaterialsClassData);
+
+			return View(mc);
 		}
 
 		// GET: PipingMaterialsClassDatas/Delete/5
