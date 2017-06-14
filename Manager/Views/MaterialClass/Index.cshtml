@@ -35,7 +35,8 @@
 			<td>
 				@if (value is ICodelist)
 				{
-					@Html.Label((value == null) ? "" : ((ICodelist)value).ID.ToString())
+					var val = (ICodelist)value;
+					@Html.Label((value == null) ? "" : val.ID.ToString(), htmlAttributes: new { @title = val.ShortDescription })
 				}
 				else
 				{

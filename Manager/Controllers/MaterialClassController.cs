@@ -33,18 +33,22 @@ namespace Manager.Controllers
 		}
 
 		// GET: PipingMaterialsClassDatas/Details/5
-		public ActionResult Details(int? id)
+		public ActionResult Details(int? id, string tn)
 		{
 			if (id == null)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			PipingMaterialsClassData pipingMaterialsClassData = db.PipingMaterialsClassData.Find(id);
-			if (pipingMaterialsClassData == null)
+
+			var type = _types.Where(t => t.Name == tn).SingleOrDefault();
+			var  mc = db.Set(type).Find(new object[] { id });
+
+			if (mc == null)
 			{
 				return HttpNotFound();
 			}
-			return View(pipingMaterialsClassData);
+
+			return View(new MaterialClassViewModel() { Item = mc, TypeName = tn, ID = (int)id });
 		}
 
 		// GET: PipingMaterialsClassData/Create
@@ -105,7 +109,7 @@ namespace Manager.Controllers
 
 				var tt = Activator.CreateInstance(type);
 
-				foreach (var item in type.GetProperties())
+				foreach (var item in type.GetProperties().Where(p => p.CanWrite))
 				{
 					var ipt = item.PropertyType;
 					if (ipt.GetInterface("ICodelist") != null)
@@ -125,6 +129,16 @@ namespace Manager.Controllers
 					{
 						switch (ipt.Name)
 						{
+							case "Int32":
+								int ival = 0;
+								int.TryParse(Request.Form[item.Name], out ival);
+								item.SetValue(tt, ival);
+								break;
+							case "Single":
+								float fval = 0;
+								float.TryParse(Request.Form[item.Name], out fval);
+								item.SetValue(tt, fval);
+								break;
 							case "String":
 								item.SetValue(tt, Request.Form[item.Name]);
 								break;
@@ -140,7 +154,7 @@ namespace Manager.Controllers
 								}
 								break;
 						}
-						
+
 					}
 				}
 
@@ -210,7 +224,7 @@ namespace Manager.Controllers
 
 				var tt = await db.Set(type).FindAsync(new object[] { id } );
 
-				foreach (var item in type.GetProperties())
+				foreach (var item in type.GetProperties().Where(p => p.CanWrite))
 				{
 					var ipt = item.PropertyType;
 					if (ipt.GetInterface("ICodelist") != null)
@@ -230,6 +244,16 @@ namespace Manager.Controllers
 					{
 						switch (ipt.Name)
 						{
+							case "Int32":
+								int ival = 0;
+								int.TryParse(Request.Form[item.Name], out ival);
+								item.SetValue(tt, ival);
+								break;
+							case "Single":
+								float fval = 0;
+								float.TryParse(Request.Form[item.Name], out fval);
+								item.SetValue(tt, fval);
+								break;
 							case "String":
 								item.SetValue(tt, Request.Form[item.Name]);
 								break;
@@ -259,18 +283,21 @@ namespace Manager.Controllers
 		}
 
 		// GET: PipingMaterialsClassDatas/Delete/5
-		public ActionResult Delete(int? id)
+		public ActionResult Delete(int? id, string tn)
 		{
 			if (id == null)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			PipingMaterialsClassData pipingMaterialsClassData = db.PipingMaterialsClassData.Find(id);
-			if (pipingMaterialsClassData == null)
+			var type = _types.Where(t => t.Name == tn).SingleOrDefault();
+
+			var tt = db.Set(type).Find(new object[] { id });
+
+			if (tt == null)
 			{
 				return HttpNotFound();
 			}
-			return View(pipingMaterialsClassData);
+			return View(new MaterialClassViewModel() { Item = tt, TypeName = tn });
 		}
 
 		// POST: PipingMaterialsClassDatas/Delete/5
@@ -278,10 +305,13 @@ namespace Manager.Controllers
 		[ValidateAntiForgeryToken]
 		public ActionResult DeleteConfirmed(int id)
 		{
-			PipingMaterialsClassData pipingMaterialsClassData = db.PipingMaterialsClassData.Find(id);
-			db.PipingMaterialsClassData.Remove(pipingMaterialsClassData);
+			var typeName = Request.Form["typeName"];
+			var type = _types.Where(t => t.Name == typeName).SingleOrDefault();
+
+			var mc = db.Set(type).Find(id);
+			db.Set(type).Remove(mc);
 			db.SaveChanges();
-			return RedirectToAction("Index");
+			return RedirectToAction("Index", new { n = typeName });
 		}
 
 		protected override void Dispose(bool disposing)
