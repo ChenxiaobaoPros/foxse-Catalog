@@ -153,13 +153,17 @@ namespace Manager.Controllers
 									item.SetValue(tt, null);
 								}
 								break;
-						}
+							default:
 
+								break;
+						}
 					}
 				}
 
-				db.Set(type).Add(tt);
-
+				db.Set(type).Attach(tt);
+				db.Entry(tt).State = EntityState.Added;
+				
+				
 				db.SaveChanges();
 				return RedirectToAction("Index", new { n = typeName });
 			}
@@ -257,7 +261,7 @@ namespace Manager.Controllers
 							case "String":
 								item.SetValue(tt, Request.Form[item.Name]);
 								break;
-							case "Nullable1":
+							case "Nullable`1":
 								DateTime odt;
 								if (DateTime.TryParse(Request.Form[item.Name], out odt))
 								{
@@ -268,11 +272,15 @@ namespace Manager.Controllers
 									item.SetValue(tt, null);
 								}
 								break;
+							default:
+
+								break;
 						}
 
 					}
 				}
 
+				db.Set(type).Attach(tt);
 				db.Entry(tt).State = EntityState.Modified;
 
 				db.SaveChanges();

@@ -19,7 +19,7 @@ namespace Manager.Controllers
 		{
 			Assembly lib = typeof(CatalogModel.Codelists.AutomatedFlangeSelectionOption).Assembly;
 			List<string[]> allTypes = new List<string[]>();
-			foreach (Type type in lib.GetTypes())
+			foreach (Type type in lib.GetTypes().Where(t=>!t.Name.Contains("<>")))
 			{
 				if (!type.GetInterfaces().Contains(typeof(ICodelistCategory)))
 				{

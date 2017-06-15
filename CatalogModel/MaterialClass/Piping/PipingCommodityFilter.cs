@@ -1,5 +1,7 @@
 ﻿using CatalogModel.Codelists;
 using CatalogModel.Specification;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace CatalogModel.MaterialClass.Piping
 {
@@ -9,17 +11,52 @@ namespace CatalogModel.MaterialClass.Piping
 	public class PipingCommodityFilter
     {
 		public int ID { get; set; }
-		public PipingMaterialsClassData PipingMaterialsClassData { get; set; }
+		public virtual PipingMaterialsClassData PipingMaterialsClassData { get; set; }
 
-		public string SpecName { get { return (PipingMaterialsClassData == null || PipingMaterialsClassData.SpecName == null) ? "unset" : PipingMaterialsClassData.SpecName; } }
+		[NotMapped]
+		public string SpecName {
+			get { return (PipingMaterialsClassData == null || PipingMaterialsClassData.SpecName == null) ? "unset" : PipingMaterialsClassData.SpecName; }
+			set
+			{
+				//int index = 0;
+				if (value != null)
+				{
+					using (CatalogContext db = new CatalogContext())
+					{
+						PipingMaterialsClassData = db.PipingMaterialsClassData.Where(i => i.SpecName == value).FirstOrDefault(); // .Find(new object[] { index });
+						db.SaveChanges();
+					}
+				}
+				else
+				{
+					PipingMaterialsClassData = null;
+				}
+			}
+		}
 
-		public ShortCodeHierarchyRule ShortCodeHierarchyRule { get; set; }
+		public virtual ShortCodeHierarchyRule ShortCodeHierarchyRule { get; set; }
 
+		[NotMapped]
 		public string ShortCode
 		{
 			get
 			{
-				return (ShortCodeHierarchyRule == null || ShortCodeHierarchyRule.ShortCode == null) ? "" : ShortCodeHierarchyRule.ShortCode;
+				return (ShortCodeHierarchyRule == null || ShortCodeHierarchyRule.ShortCode == null) ? "unset" : ShortCodeHierarchyRule.ShortCode;
+			}
+			set
+			{
+				if (value != null)
+				{
+					using (CatalogContext db = new CatalogContext())
+					{
+						ShortCodeHierarchyRule = db.ShortCodeHierarchyRules.Where(i => i.ShortCode == value).FirstOrDefault(); // .Find(new object[] { index });
+						db.SaveChanges();
+					}
+				}
+				else
+				{
+					ShortCodeHierarchyRule = null;
+				}
 			}
 		}
 
@@ -49,11 +86,24 @@ namespace CatalogModel.MaterialClass.Piping
 		/// </summary>
 		public string EngineeringTag { get; set; }
 
-		public PipingCommodityMatlControlData PipingCommodityMatlControlData { get; set; }
+		[NotMapped]
+		public virtual PipingCommodityMatlControlData PipingCommodityMatlControlData { get; set; }
 		public string CommodityCode {
-			get
+			get	{ return (PipingCommodityMatlControlData == null || PipingCommodityMatlControlData.ContractorCommodityCode == null) ? "unset" : PipingCommodityMatlControlData.ContractorCommodityCode; }
+			set
 			{
-				return (PipingCommodityMatlControlData == null || PipingCommodityMatlControlData.ContractorCommodityCode == null) ? "" : PipingCommodityMatlControlData.ContractorCommodityCode;
+				if (value != null)
+				{
+					using (CatalogContext db = new CatalogContext())
+					{
+						PipingCommodityMatlControlData = db.PipingCommodityMatlControlData.Where(i => i.ContractorCommodityCode == value).FirstOrDefault(); // .Find(new object[] { index });
+						db.SaveChanges();
+					}
+				}
+				else
+				{
+					PipingCommodityMatlControlData = null;
+				}
 			}
 		}
 

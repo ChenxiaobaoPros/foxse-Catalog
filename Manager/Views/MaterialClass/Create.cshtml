@@ -7,7 +7,7 @@
 	var type = Model.Item.GetType();
 }
 
-<h2>Create</h2>
+<h3>Create <b>@Model.TypeName</b></h3>
 
 @using (Html.BeginForm())
 {
@@ -15,7 +15,6 @@
 
 	@*@Helpers.GenerateEditor(type, Selects)*@
 	<div class="form-horizontal">
-		<h4>@Model.TypeName</h4>
 		<hr />
 		@Html.ValidationSummary(true, "", new { @class = "text-danger" })
 		@Html.Hidden("typeName", Model.TypeName)
@@ -24,24 +23,58 @@
 		{
 			var val = type.GetProperty(prop.Name).GetValue(Model.Item);
 
-			if (Selects.ContainsKey(prop.Name))
+			if (Selects.ContainsKey(prop.PropertyType.Name))
 			{
 				<div class="form-group">
 					@Html.Label(prop.Name, htmlAttributes: new { @class = "control-label col-md-3" })
 					<div class="col-md-9 dropdown">
-						@Html.DropDownList(prop.Name, Selects[prop.Name], "", new { htmlAttributes = new { @class = "form-control" } })
+						@Html.DropDownList(prop.Name, Selects[prop.PropertyType.Name], "", new { @class = "form-control" })
 					</div>
 				</div>
 			}
 			else if (prop.Name.ToUpper() != "ID")
 			{
-				<div class="form-group">
-					@Html.Label(prop.Name, htmlAttributes: new { @class = "control-label col-md-3" })
-					<div class="col-md-9">
-						<input class="form-control" type="text" name="@prop.Name" value="@val" />
-						@Html.ValidationMessage(prop.Name, "", new { @class = "text-danger" })
+				if (prop.PropertyType.Namespace.Contains("System"))
+				{
+					var inputType = "text";
+					var step = "";
+					switch (prop.PropertyType.Name)
+					{
+						case "Int32":
+							inputType = "number";
+							break;
+						case "Single":
+							inputType = "number";
+							step = "step=any";
+							break;
+						case "Nullable`1":
+							inputType = "date";
+							break;
+					}
+					<div class="form-group">
+						@if (prop.CustomAttributes.Where(a => a.AttributeType.Name == "NotMappedAttribute").Count() > 0)
+						{
+							@Html.ActionLink(prop.Name, "", "", new { }, new { @class = "control-label col-md-3" })
+						}
+						else
+						{
+							@Html.Label(prop.Name, htmlAttributes: new { @class = "control-label col-md-3" })
+						}
+						<div class="col-md-9">
+							<input class="form-control" type="@inputType" @step name="@prop.Name" value="@val" />
+						</div>
 					</div>
-				</div>
+				}
+				else if (prop.PropertyType.Name == "UnitType")
+				{
+					<div class="form-group">
+						@Html.Hidden(prop.Name, val, new { @id = prop.Name })
+						@Html.Label(prop.Name, htmlAttributes: new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							<a class="btn btn-info" title="Select">@val</a>
+						</div>
+					</div>
+				}
 			}
 		}
 

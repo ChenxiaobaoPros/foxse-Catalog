@@ -19,7 +19,7 @@
 		@foreach (var prop in type.GetProperties())
 		{
 			<div class="row">
-				@{
+			@{
 				var val = type.GetProperty(prop.Name).GetValue(Model.Item);
 
 				if (val is ICodelist)
@@ -32,7 +32,7 @@
 							</div>
 						</div>
 				}
-				else
+				else if (prop.PropertyType.Namespace.Contains("System"))
 				{
 						<div class="form-group">
 							@Html.Label(prop.Name, htmlAttributes: new { @class = "control-label col-md-3" })
@@ -41,9 +41,9 @@
 							</div>
 						</div>
 				}
-				}
+			}
 			</div>
-					}
+	}
 
 
     @using (Html.BeginForm()) {

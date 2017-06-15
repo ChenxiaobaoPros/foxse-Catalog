@@ -31,7 +31,7 @@
 						</div>
 					</div>
 				}
-				else
+				else if (prop.PropertyType.Namespace.Contains("System") || prop.PropertyType.Name == "UnitType")
 				{
 					<div class="form-group">
 						@Html.Label(prop.Name, htmlAttributes: new { @class = "control-label col-md-3" })
@@ -48,6 +48,6 @@
 <div>
 	<p>
 		@Html.ActionLink("Edit", "Edit", new { id = itemID, tn = Model.TypeName }) |
-		@Html.ActionLink("Back to List", "Index")
+		@Html.ActionLink("Back to List", "Index", new { n = Model.TypeName })
 	</p>
 </div>
