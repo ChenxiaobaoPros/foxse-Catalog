@@ -103,7 +103,7 @@ namespace Manager.Controllers
 					if (!selects.ContainsKey(itemType.Name))
 						selects.Add(itemType.Name, sli);
 				}
-				else if (item.PropertyType.Namespace.Contains("CatalogModel"))
+				else if (item.PropertyType.Namespace.Contains("CatalogModel."))
 				{
 					var set = db.Set(itemType);
 					var sli = new List<SelectListItem>();

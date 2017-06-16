@@ -102,16 +102,16 @@
 			<input type="hidden" value="@ViewBag.Names[ViewBag.NamesCount - depth]" name="typeName" />
 			<div class="row">
 				<div class="col-sm-3">
-					<input class="form-control"  type="text" name="shortDescription" />
+					<input class="form-control"  type="text" name="shortDescription" title="Short Description" />
 				</div>
 				<div class="col-lg-4">
-					<input class="form-control" type="text" multiple name="longDescription" />
+					<input class="form-control" type="text" multiple name="longDescription" title="Long Description"/>
 				</div>
 				<div class="col-sm-1">
-					<input class="form-control"  type="text" name="codelistNumber" />
+					<input class="form-control"  type="text" name="codelistNumber" title="Codelist Number"/>
 				</div>
 				<div class="col-sm-1">
-					<input class="form-control"  type="text" name="sortOrder" />
+					<input class="form-control"  type="text" name="sortOrder" title="Sort Order"/>
 				</div>
 				<div class="col-sm-1 pull-right">
 					<input class="form-control btn-success" type="submit" title="@("Add " + (string)ViewBag.Names[ViewBag.NamesCount - depth])" value="+" />

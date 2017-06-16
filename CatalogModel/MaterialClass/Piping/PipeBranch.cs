@@ -11,7 +11,7 @@ namespace CatalogModel.MaterialClass.Piping
 	public class PipeBranch
     {
 		public int ID { get; set; }
-		public PipingMaterialsClassData SpecName { get; set; }
+		public virtual PipingMaterialsClassData SpecName { get; set; }
 
 		//[NotMapped, Display(Description = "/MaterialClass?n=PipingMaterialsClassData")]
 		//public string SpecName
@@ -39,13 +39,13 @@ namespace CatalogModel.MaterialClass.Piping
 		public float AngleLow { get; set; }
 		public float AngleHigh { get; set; }
 
-		public UnitType AngleLowUnitType { get; set; }
-		public UnitType AngleHighUnitType { get; set; }
-		public UnitType HdrSizeNPDUnitType { get; set; }
-		public UnitType BrSizeNPDUnitType { get; set; }
+		public virtual UnitType AngleLowUnitType { get; set; }
+		public virtual UnitType AngleHighUnitType { get; set; }
+		public virtual UnitType HdrSizeNPDUnitType { get; set; }
+		public virtual UnitType BrSizeNPDUnitType { get; set; }
 
-		public ShortCodeHierarchyRule ShortCode { get; set; }
-		public ShortCodeHierarchyRule SecondaryShortCode { get; set; }
-		public ShortCodeHierarchyRule TertiaryShortCode { get; set; }		
+		public virtual ShortCodeHierarchyRule ShortCode { get; set; }
+		public virtual ShortCodeHierarchyRule SecondaryShortCode { get; set; }
+		public virtual ShortCodeHierarchyRule TertiaryShortCode { get; set; }		
 	}
 }

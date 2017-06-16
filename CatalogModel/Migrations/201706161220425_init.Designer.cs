@@ -7,13 +7,13 @@ namespace CatalogModel.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class update_piping : IMigrationMetadata
+    public sealed partial class init : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(update_piping));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(init));
         
         string IMigrationMetadata.Id
         {
-            get { return "201706160742156_update_piping"; }
+            get { return "201706161220425_init"; }
         }
         
         string IMigrationMetadata.Source

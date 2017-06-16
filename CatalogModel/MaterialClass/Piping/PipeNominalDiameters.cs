@@ -11,7 +11,7 @@ namespace CatalogModel.MaterialClass.Piping
 	public class PipeNominalDiameters
     {
 		public int ID { get; set; }
-		public PipingMaterialsClassData SpecName { get; set; }
+		public virtual PipingMaterialsClassData SpecName { get; set; }
 
 		//[NotMapped, Display(Description = "/MaterialClass?n=PipingMaterialsClassData")]
 		//public string SpecName {
@@ -34,6 +34,6 @@ namespace CatalogModel.MaterialClass.Piping
 		//}
 
 		public int Npd { get; set; }
-		public UnitType NpdUnitType { get; set; }
+		public virtual UnitType NpdUnitType { get; set; }
 	}
 }

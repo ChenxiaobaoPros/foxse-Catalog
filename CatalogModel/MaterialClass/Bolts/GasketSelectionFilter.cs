@@ -1,5 +1,6 @@
 ﻿using CatalogModel.Codelists;
 using CatalogModel.MaterialClass.Piping;
+using CatalogModel.Specification;
 
 namespace CatalogModel.MaterialClass.Bolts
 {
@@ -7,38 +8,36 @@ namespace CatalogModel.MaterialClass.Bolts
 	{
 		public int ID { get; set; }
 
-		public PipingMaterialsClassData PipingMaterialsClassData { get; set; }
-
-		public string SpecName { get { return (PipingMaterialsClassData == null) ? "unset" : PipingMaterialsClassData.SpecName; } }
+		public virtual PipingMaterialsClassData SpecName { get; set; }
 
 		public int NominalDiameterFrom { get; set; }
 
 		public int NominalDiameterTo { get; set; }
 
-		public UnitType NpdUnitType { get; set; }
+		public virtual UnitType NpdUnitType { get; set; }
 
-		public GasketOption GasketOption { get; set; }
+		public virtual GasketOption GasketOption { get; set; }
 
 		public float MaximumTemperature { get; set; }
-		public UnitType MaximumTemperatureUnits { get; set; }
+		public virtual UnitType MaximumTemperatureUnits { get; set; }
 
-		public EndPreparation EndPreparation { get; set; }
-		public PressureRating PressureRating { get; set; }
-		public EndStandard EndStandard { get; set; }
-		public EndPreparation AlternateEndPreparation { get; set; }
-		public PressureRating AlternatePressureRating { get; set; }
-		public EndStandard AlternateEndStandard { get; set; }
+		public virtual EndPreparation EndPreparation { get; set; }
+		public virtual PressureRating PressureRating { get; set; }
+		public virtual EndStandard EndStandard { get; set; }
+		public virtual EndPreparation AlternateEndPreparation { get; set; }
+		public virtual PressureRating AlternatePressureRating { get; set; }
+		public virtual EndStandard AlternateEndStandard { get; set; }
 
-		public string ContractorCommodityCode { get; set; }
+		public virtual PipingCommodityMatlControlData ContractorCommodityCode { get; set; }
 
-		public FluidCode FluidCode { get; set; }
-		public ScheduleThickness ScheduleThickness { get; set; }
+		public virtual FluidCode FluidCode { get; set; }
+		public virtual ScheduleThickness ScheduleThickness { get; set; }
 
 		public int Priority { get; set; }
-		public RingNumber RingNumber { get; set; }
+		public virtual RingNumber RingNumber { get; set; }
 
-		public FabricationType FabricationCategoryOverride { get; set; }
-		public SupplyResponsibility SupplyResponsibilityOverride { get; set; }
+		public virtual FabricationType FabricationCategoryOverride { get; set; }
+		public virtual SupplyResponsibility SupplyResponsibilityOverride { get; set; }
 
 		public string Comments { get; set; }
 		public int QuantityOfAltReportableParts { get; set; }

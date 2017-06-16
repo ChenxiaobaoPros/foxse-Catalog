@@ -1,5 +1,6 @@
 ﻿using CatalogModel.Codelists;
 using CatalogModel.MaterialClass.Piping;
+using CatalogModel.Specification;
 using System.ComponentModel.DataAnnotations;
 
 namespace CatalogModel.MaterialClass.Bolts
@@ -9,29 +10,27 @@ namespace CatalogModel.MaterialClass.Bolts
 		[Key]
 		public int ID { get; set; }
 
-		public PipingMaterialsClassData PipingMaterialsClassData { get; set; }
+		public virtual PipingMaterialsClassData SpecName { get; set; }
 
-		public string SpecName { get { return (PipingMaterialsClassData == null) ? "unset" : PipingMaterialsClassData.SpecName; } }
-
-		public NutOption NutOption { get; set; }
+		public virtual NutOption NutOption { get; set; }
 
 		public float MaximumTemperature { get; set; }
-		public UnitType MaximumTemperatureUnits { get; set; }
+		public virtual UnitType MaximumTemperatureUnits { get; set; }
 
-		public BoltType BoltType { get; set; }
+		public virtual BoltType BoltType { get; set; }
 
 		public float BoltDiameter { get; set; }
-		public UnitType BoltDiameterUnits { get; set; }
+		public virtual UnitType BoltDiameterUnits { get; set; }
 
-		public PressureRating PressureRating { get; set; }
-		public string ContractorCommodityCode { get; set; }
+		public virtual PressureRating PressureRating { get; set; }
+		public virtual PipingCommodityMatlControlData ContractorCommodityCode { get; set; }
 
-		public SupplementaryNutRequirement SupplementaryNutOption { get; set; }
+		public virtual SupplementaryNutRequirement SupplementaryNutOption { get; set; }
 		public string SupplNutCntrCommodityCode { get; set; }
 
 
-		public FabricationType FabricationCategoryOverride { get; set; }
-		public SupplyResponsibility SupplyResponsibilityOverride { get; set; }
+		public virtual FabricationType FabricationCategoryOverride { get; set; }
+		public virtual SupplyResponsibility SupplyResponsibilityOverride { get; set; }
 
 		public string Comments { get; set; }
 		public string PipingNote1 { get; set; }
