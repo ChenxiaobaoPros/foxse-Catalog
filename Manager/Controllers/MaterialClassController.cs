@@ -33,18 +33,22 @@ namespace Manager.Controllers
 		}
 
 		// GET: PipingMaterialsClassDatas/Details/5
-		public ActionResult Details(int? id)
+		public ActionResult Details(int? id, string tn)
 		{
 			if (id == null)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			PipingMaterialsClassData pipingMaterialsClassData = db.PipingMaterialsClassData.Find(id);
-			if (pipingMaterialsClassData == null)
+
+			var type = _types.Where(t => t.Name == tn).SingleOrDefault();
+			var  mc = db.Set(type).Find(new object[] { id });
+
+			if (mc == null)
 			{
 				return HttpNotFound();
 			}
-			return View(pipingMaterialsClassData);
+
+			return View(new MaterialClassViewModel() { Item = mc, TypeName = tn, ID = (int)id });
 		}
 
 		// GET: PipingMaterialsClassData/Create
@@ -54,31 +58,71 @@ namespace Manager.Controllers
 
 			var tt = Activator.CreateInstance(type);
 
-			ViewBag.Selects = GetSelects();
+			var selects = GetSelects(type, tt);
 			ViewBag.TypeName = tn;
-			return View(tt);
+			return View(new MaterialClassViewModel() { Selects = selects, Item = tt, TypeName = tn });
 		}
 
-		private Dictionary<string, List<SelectListItem>> GetSelects()
+		private Dictionary<string, List<SelectListItem>> GetSelects(Type type, object obj)
 		{
 			var selects = new Dictionary<string, List<SelectListItem>>();
-			foreach (MethodInfo item in typeof(PipingMaterialsClassData).GetMethods())
+			foreach (PropertyInfo item in type.GetProperties())
 			{
-				if (/*item.IsVirtual && */item.ReturnType.GetInterface("ICodelist") != null)
+				var itemType = item.PropertyType;
+
+				var val = item.GetValue(obj);
+
+
+				if (/*item.IsVirtual && */itemType.GetInterface("ICodelist") != null)
 				{
-					var set = db.Set(item.ReturnType);
+					var set = db.Set(itemType);
 					var sli = new List<SelectListItem>();
+
+					var groups = new Dictionary<int, SelectListGroup>();
+
 					foreach (ICodelist i in set)
+					{
+						var li = new SelectListItem()
+						{
+							Selected = (val == i),
+							Text = i.LongDescription,
+							Value = i.ID.ToString()
+						};
+
+						if (i.Parent != null) {
+							if (!groups.ContainsKey(i.Parent.ID))
+							{
+								groups.Add(i.Parent.ID, new SelectListGroup() { Name = (i.Parent.LongDescription == null)?i.Parent.ShortDescription : i.Parent.LongDescription });
+							}
+							li.Group = groups[i.Parent.ID];
+						}
+
+						sli.Add(li);
+					}
+
+					if (!selects.ContainsKey(itemType.Name))
+						selects.Add(itemType.Name, sli);
+				}
+				else if (item.PropertyType.Namespace.Contains("CatalogModel."))
+				{
+					var set = db.Set(itemType);
+					var sli = new List<SelectListItem>();
+
+					foreach (var i in set)
 					{
 						sli.Add(new SelectListItem()
 						{
-							Text = i.LongDescription,
-							Value = i.ID.ToString()
+							Selected = (val == i),
+							Text = itemType.GetProperty(item.Name).GetValue(i).ToString(),
+							Value = itemType.GetProperty("ID").GetValue(i).ToString(),
 						});
 					}
-					if (!selects.ContainsKey(item.ReturnType.Name))
-						selects.Add(item.ReturnType.Name, sli);
+
+					if (!selects.ContainsKey(itemType.Name))
+						selects.Add(itemType.Name, sli);
 				}
+
+
 			}
 			return selects;
 		}
@@ -100,10 +144,10 @@ namespace Manager.Controllers
 
 				var tt = Activator.CreateInstance(type);
 
-				foreach (var item in type.GetProperties())
+				foreach (var item in type.GetProperties().Where(p => p.CanWrite))
 				{
 					var ipt = item.PropertyType;
-					if (ipt.GetInterface("ICodelist") != null)
+					if (ipt.GetInterface("ICodelist") != null || ipt.Namespace.Contains("CatalogModel."))
 					{
 						int parsed = 0;
 						if (int.TryParse(Request.Form[item.Name], out parsed))
@@ -120,6 +164,16 @@ namespace Manager.Controllers
 					{
 						switch (ipt.Name)
 						{
+							case "Int32":
+								int ival = 0;
+								int.TryParse(Request.Form[item.Name], out ival);
+								item.SetValue(tt, ival);
+								break;
+							case "Single":
+								float fval = 0;
+								float.TryParse(Request.Form[item.Name], out fval);
+								item.SetValue(tt, fval);
+								break;
 							case "String":
 								item.SetValue(tt, Request.Form[item.Name]);
 								break;
@@ -134,67 +188,159 @@ namespace Manager.Controllers
 									item.SetValue(tt, null);
 								}
 								break;
+							default:
+
+								break;
 						}
-						
 					}
 				}
 
-				db.Set(type).Add(tt);
-
+				db.Set(type).Attach(tt);
+				db.Entry(tt).State = EntityState.Added;
+				
+				
 				db.SaveChanges();
-				return RedirectToAction("Index");
+				return RedirectToAction("Index", new { n = typeName });
 			}
 
 			return View(mc);
 		}
 
 		// GET: PipingMaterialsClassDatas/Edit/5
-		public ActionResult Edit(int? id)
+		public ActionResult Edit(int? id, string tn)
 		{
-			ViewBag.Selects = GetSelects();
-
 			if (id == null)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			PipingMaterialsClassData pipingMaterialsClassData = db.PipingMaterialsClassData.Find(id);
-			if (pipingMaterialsClassData == null)
+
+			var type = _types.Where(t => t.Name == tn).SingleOrDefault();
+
+			var tt = db.Set(type).Find(new object[] { id });
+
+			if (tt == null)
 			{
 				return HttpNotFound();
 			}
-			return View(pipingMaterialsClassData);
+
+			var selects = GetSelects(type, tt);
+
+			return View(new MaterialClassViewModel() { Selects = selects, Item = tt, TypeName = tn });
 		}
 
-		// POST: PipingMaterialsClassDatas/Edit/5
-		// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+		//// POST: PipingMaterialsClassDatas/Edit/5
+		//// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+		//// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+		//[HttpPost]
+		//[ValidateAntiForgeryToken]
+		//public ActionResult Edit(/*[Bind(Include = "ID,SpecName,MaterialsDescription,FluidService,Comments,RevisionNumber,ApprovedBy,ApprovalDate,JacketMatOfConstructionClass,JumperMatOfConstructionClass,JacketMaterialsDescription,JumperMaterialsDescription,JacketAndJumperFluidService,HyperlinkToHumanSpec,PipingNote1,WeldingProcedureSpecification")] */
+		//	PipingMaterialsClassData pipingMaterialsClassData)
+		//{
+		//	if (ModelState.IsValid)
+		//	{
+		//		db.Entry(pipingMaterialsClassData).State = EntityState.Modified;
+		//		db.SaveChanges();
+		//		return RedirectToAction("Index");
+		//	}
+		//	return View(pipingMaterialsClassData);
+		//}
+
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ActionResult Edit(/*[Bind(Include = "ID,SpecName,MaterialsDescription,FluidService,Comments,RevisionNumber,ApprovedBy,ApprovalDate,JacketMatOfConstructionClass,JumperMatOfConstructionClass,JacketMaterialsDescription,JumperMaterialsDescription,JacketAndJumperFluidService,HyperlinkToHumanSpec,PipingNote1,WeldingProcedureSpecification")] */
-			PipingMaterialsClassData pipingMaterialsClassData)
+		public async Task<ActionResult> Edit(object mc)
 		{
 			if (ModelState.IsValid)
 			{
-				db.Entry(pipingMaterialsClassData).State = EntityState.Modified;
+				var typeName = Request.Form["typeName"];
+				var id = 0;
+
+				if (!int.TryParse(Request.Form["ID"], out id))
+					return RedirectToAction("Create", new { tn = typeName });
+
+				var type = _types.Where(t => t.Name == typeName).SingleOrDefault();
+
+				//var args = new object[] { mc };
+
+				var tt = await db.Set(type).FindAsync(new object[] { id } );
+
+				foreach (var item in type.GetProperties().Where(p => p.CanWrite))
+				{
+					var ipt = item.PropertyType;
+					if (ipt.GetInterface("ICodelist") != null || ipt.Namespace.Contains("CatalogModel."))
+					{
+						int parsed = 0;
+						if (int.TryParse(Request.Form[item.Name], out parsed))
+						{
+							var value = await db.Set(ipt).FindAsync(new object[] { parsed });
+							item.SetValue(tt, value);
+						}
+						else
+						{
+							item.SetValue(tt, null);
+						}
+					}
+					else
+					{
+						switch (ipt.Name)
+						{
+							case "Int32":
+								int ival = 0;
+								int.TryParse(Request.Form[item.Name], out ival);
+								item.SetValue(tt, ival);
+								break;
+							case "Single":
+								float fval = 0;
+								float.TryParse(Request.Form[item.Name], out fval);
+								item.SetValue(tt, fval);
+								break;
+							case "String":
+								item.SetValue(tt, Request.Form[item.Name]);
+								break;
+							case "Nullable`1":
+								DateTime odt;
+								if (DateTime.TryParse(Request.Form[item.Name], out odt))
+								{
+									item.SetValue(tt, odt);
+								}
+								else
+								{
+									item.SetValue(tt, null);
+								}
+								break;
+							default:
+
+								break;
+						}
+
+					}
+				}
+
+				db.Set(type).Attach(tt);
+				db.Entry(tt).State = EntityState.Modified;
+
 				db.SaveChanges();
-				return RedirectToAction("Index");
+				return RedirectToAction("Index", new { n = typeName });
 			}
-			return View(pipingMaterialsClassData);
+
+			return View(mc);
 		}
 
 		// GET: PipingMaterialsClassDatas/Delete/5
-		public ActionResult Delete(int? id)
+		public ActionResult Delete(int? id, string tn)
 		{
 			if (id == null)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			PipingMaterialsClassData pipingMaterialsClassData = db.PipingMaterialsClassData.Find(id);
-			if (pipingMaterialsClassData == null)
+			var type = _types.Where(t => t.Name == tn).SingleOrDefault();
+
+			var tt = db.Set(type).Find(new object[] { id });
+
+			if (tt == null)
 			{
 				return HttpNotFound();
 			}
-			return View(pipingMaterialsClassData);
+			return View(new MaterialClassViewModel() { Item = tt, TypeName = tn });
 		}
 
 		// POST: PipingMaterialsClassDatas/Delete/5
@@ -202,10 +348,13 @@ namespace Manager.Controllers
 		[ValidateAntiForgeryToken]
 		public ActionResult DeleteConfirmed(int id)
 		{
-			PipingMaterialsClassData pipingMaterialsClassData = db.PipingMaterialsClassData.Find(id);
-			db.PipingMaterialsClassData.Remove(pipingMaterialsClassData);
+			var typeName = Request.Form["typeName"];
+			var type = _types.Where(t => t.Name == typeName).SingleOrDefault();
+
+			var mc = db.Set(type).Find(id);
+			db.Set(type).Remove(mc);
 			db.SaveChanges();
-			return RedirectToAction("Index");
+			return RedirectToAction("Index", new { n = typeName });
 		}
 
 		protected override void Dispose(bool disposing)

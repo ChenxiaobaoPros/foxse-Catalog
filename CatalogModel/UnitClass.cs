@@ -7,6 +7,6 @@ namespace CatalogModel
 		public int ID { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }
-		public List<UnitType> Units { get; set; }
+		public virtual List<UnitType> Units { get; set; }
 	}
 }

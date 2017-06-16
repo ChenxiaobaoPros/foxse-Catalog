@@ -7,7 +7,7 @@
 	var type = (Type)ViewBag.Type;
 }
 
-<h2>Index</h2>
+<h2>@type.Name</h2>
 
 <p>
 	@Html.ActionLink("Create New", "Create", new { tn = type.Name })
@@ -16,9 +16,12 @@
 	<tr>
 		@foreach (var item in type.GetProperties())
 		{
-			<th class="vertical">
-				<div>@Html.DisplayName(item.Name)</div>
-			</th>
+			//if (item.PropertyType.Namespace.Contains("CatalogModel") || item.PropertyType.Namespace.Contains("System") || item.PropertyType.Name == "UnitType")
+			{
+				<th class="vertical">
+					<div>@Html.DisplayName(item.Name)</div>
+				</th>
+			}
 		}
 		<th width="5%"></th>
 	</tr>
@@ -28,28 +31,50 @@
 		var itemID = type.GetProperty("ID").GetValue(item);
 
 		<tr>
-
 			@foreach (var prop in type.GetProperties())
 			{
 				var value = type.GetProperty(prop.Name).GetValue(item);
-			<td>
-				@if (value is ICodelist)
+
+				if (prop.PropertyType.Namespace.Contains("Codelists"))
 				{
-					@Html.Label((value == null) ? "" : ((ICodelist)value).ID.ToString())
+					<td>
+						@{
+							if (value == null)
+							{
+								@Html.Label("")
+							}
+							else
+							{
+								var val = (ICodelist)value;
+								@Html.Label(val.ID.ToString(), htmlAttributes: new { @title = val.ShortDescription })
+							}
+						}
+					</td>
+							}
+							else if (prop.PropertyType.Namespace.Contains("System") || prop.PropertyType.Name == "UnitType")
+							{
+								<td>
+									@Html.Label((value == null) ? "" : value.ToString())
+								</td>
+							}
+							else
+							{
+								string vall = "";
+								if (value != null)
+								{
+									vall = value.GetType().GetProperty(prop.Name).GetValue(value).ToString();
+								}
+								<td>
+									@Html.Label(vall)
+								</td>
+							}
 				}
-				else
-				{
-					@Html.Label((value == null) ? "" : value.ToString())
-				}
-			</td>
-			}
-			<td>
+<td>
 				@Html.ActionLink("Edit", "Edit", new { id = itemID, tn = type.Name })
 				@Html.ActionLink("Details", "Details", new { id = itemID, tn = type.Name })
 				@Html.ActionLink("Delete", "Delete", new { id = itemID, tn = type.Name })
 			</td>
 		</tr>
-	}
+							}
 
 </table>
-

@@ -8,16 +8,14 @@ namespace CatalogModel.MaterialClass.Piping
 	public class DefaultChangeOfDirectionPerSpec
     {
 		public int ID { get; set; }
-		public PipingMaterialsClassData PipingMaterialsClassData { get; set; }
-
-		public string SpecName { get { return (PipingMaterialsClassData == null || PipingMaterialsClassData.SpecName == null) ? "unset" : PipingMaterialsClassData.SpecName; } }
+		public virtual PipingMaterialsClassData SpecName { get; set; }
 
 		public float BendAngleFrom { get; set; }
 		public float BendAngleTo { get; set; }
 
-		public UnitType BendAngleFromUnitType { get; set; }
-		public UnitType BendAngleToUnitType { get; set; }
+		public virtual UnitType BendAngleFromUnitType { get; set; }
+		public virtual UnitType BendAngleToUnitType { get; set; }
 
-		public ShortCodeHierarchyRule FunctionalShortCode { get; set; }
+		public virtual ShortCodeHierarchyRule FunctionalShortCode { get; set; }
 	}
 }

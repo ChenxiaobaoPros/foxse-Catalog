@@ -1,4 +1,6 @@
-﻿namespace CatalogModel.MaterialClass.Piping
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace CatalogModel.MaterialClass.Piping
 {
 	/// <summary>
 	/// Стандартные углы
@@ -6,13 +8,13 @@
 	public class BendAngles
     {
 		public int ID { get; set; }
-		public PipingMaterialsClassData PipingMaterialsClassData { get; set; }
 
-		public string SpecName { get { return (PipingMaterialsClassData == null || PipingMaterialsClassData.SpecName == null) ? "unset" : PipingMaterialsClassData.SpecName; } }
+		[Display(Order = 0)]
+		public virtual PipingMaterialsClassData SpecName { get; set; }
 
 		public int Npd { get; set; }
-		public UnitType NpdUnitType { get; set; }
+		public virtual UnitType NpdUnitType { get; set; }
 		public float BendAngle { get; set; }
-		public UnitType BendAngleUnitType { get; set; }
+		public virtual UnitType BendAngleUnitType { get; set; }
 	}
 }

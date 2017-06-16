@@ -1,5 +1,8 @@
 ﻿using CatalogModel.Codelists;
 using CatalogModel.Specification;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace CatalogModel.MaterialClass.Piping
 {
@@ -9,53 +12,102 @@ namespace CatalogModel.MaterialClass.Piping
 	public class PipingCommodityFilter
     {
 		public int ID { get; set; }
-		public PipingMaterialsClassData PipingMaterialsClassData { get; set; }
+		public virtual PipingMaterialsClassData SpecName { get; set; }
 
-		public string SpecName { get { return (PipingMaterialsClassData == null || PipingMaterialsClassData.SpecName == null) ? "unset" : PipingMaterialsClassData.SpecName; } }
+		//[NotMapped, Display(Description = "/MaterialClass?n=PipingMaterialsClassData")]
+		//public string SpecName {
+		//	get { return (PipingMaterialsClassData == null || PipingMaterialsClassData.SpecName == null) ? "unset" : PipingMaterialsClassData.SpecName; }
+		//	set
+		//	{
+		//		//int index = 0;
+		//		if (value != null)
+		//		{
+		//			using (CatalogContext db = new CatalogContext())
+		//			{
+		//				PipingMaterialsClassData = db.PipingMaterialsClassData.Where(i => i.SpecName == value).FirstOrDefault(); // .Find(new object[] { index });
+		//				db.SaveChanges();
+		//			}
+		//		}
+		//		else
+		//		{
+		//			PipingMaterialsClassData = null;
+		//		}
+		//	}
+		//}
 
-		public ShortCodeHierarchyRule ShortCodeHierarchyRule { get; set; }
+		public virtual ShortCodeHierarchyRule ShortCode { get; set; }
 
-		public string ShortCode
-		{
-			get
-			{
-				return (ShortCodeHierarchyRule == null || ShortCodeHierarchyRule.ShortCode == null) ? "" : ShortCodeHierarchyRule.ShortCode;
-			}
-		}
+		//[NotMapped, Display(Description = "/Specification?n=ShortCodeHierarchyRule")]
+		//public string ShortCode
+		//{
+		//	get
+		//	{
+		//		return (ShortCodeHierarchyRule == null || ShortCodeHierarchyRule.ShortCode == null) ? "unset" : ShortCodeHierarchyRule.ShortCode;
+		//	}
+		//	set
+		//	{
+		//		if (value != null)
+		//		{
+		//			using (CatalogContext db = new CatalogContext())
+		//			{
+		//				ShortCodeHierarchyRule = db.ShortCodeHierarchyRules.Where(i => i.ShortCode == value).FirstOrDefault(); // .Find(new object[] { index });
+		//				db.SaveChanges();
+		//			}
+		//		}
+		//		else
+		//		{
+		//			ShortCodeHierarchyRule = null;
+		//		}
+		//	}
+		//}
 
 		public string Comments { get; set; }
 
 		public int FirstSizeFrom { get; set; }
 		public int FirstSizeTo { get; set; }
-		public UnitType FirstSizeUnits { get; set; }
+		public virtual UnitType FirstSizeUnits { get; set; }
 
 		public int SecondSizeFrom { get; set; }
 		public int SecondSizeTo { get; set; }
-		public UnitType SecondSizeUnits { get; set; }
+		public virtual UnitType SecondSizeUnits { get; set; }
 
-		public CommodityOption OptionCode { get; set; }
+		public virtual CommodityOption OptionCode { get; set; }
 		public string MultisizeOption { get; set; }
-		public SelectionBasis SelectionBasis { get; set; }
-		public FluidCode FluidCode { get; set; }
-		public JacketedPipingBasis JacketedPipingBasis { get; set; }
+		public virtual SelectionBasis SelectionBasis { get; set; }
+		public virtual FluidCode FluidCode { get; set; }
+		public virtual JacketedPipingBasis JacketedPipingBasis { get; set; }
 
 		public float MaximumTemperature { get; set; }
-		public UnitType MaximumTemperatureUnits { get; set; }
+		public virtual UnitType MaximumTemperatureUnits { get; set; }
 		public float MinimumTemperature { get; set; }
-		public UnitType MinimumTemperatureUnits { get; set; }
+		public virtual UnitType MinimumTemperatureUnits { get; set; }
 
 		/// <summary>
 		/// Суффикс при именовании в дереве проекта
 		/// </summary>
-		public string EngineeringTag { get; set; }
+		public virtual string EngineeringTag { get; set; }
 
-		public PipingCommodityMatlControlData PipingCommodityMatlControlData { get; set; }
-		public string CommodityCode {
-			get
-			{
-				return (PipingCommodityMatlControlData == null || PipingCommodityMatlControlData.ContractorCommodityCode == null) ? "" : PipingCommodityMatlControlData.ContractorCommodityCode;
-			}
-		}
+		public virtual PipingCommodityMatlControlData CommodityCode { get; set; }
+
+		//[NotMapped, Display(Description = "/Specification?n=PipingCommodityMatlControlData")]
+		//public string CommodityCode {
+		//	get	{ return (PipingCommodityMatlControlData == null || PipingCommodityMatlControlData.ContractorCommodityCode == null) ? "unset" : PipingCommodityMatlControlData.ContractorCommodityCode; }
+		//	set
+		//	{
+		//		if (value != null)
+		//		{
+		//			using (CatalogContext db = new CatalogContext())
+		//			{
+		//				PipingCommodityMatlControlData = db.PipingCommodityMatlControlData.Where(i => i.ContractorCommodityCode == value).FirstOrDefault(); // .Find(new object[] { index });
+		//				db.SaveChanges();
+		//			}
+		//		}
+		//		else
+		//		{
+		//			PipingCommodityMatlControlData = null;
+		//		}
+		//	}
+		//}
 
 		public string FabricationCategoryOverride { get; set; }
 		public string SupplyResponsibilityOverride { get; set; }
@@ -75,8 +127,8 @@ namespace CatalogModel.MaterialClass.Piping
 		/// </summary>
 		public float BendRadius { get; set; }
 		public int NumberOfMiterCuts { get; set; }
-		public UnitType FirstSizeUOMBasisInCatalog { get; set; }
-		public UnitType SecondSizeUOMBasisInCatalog { get; set; }
+		public virtual UnitType FirstSizeUOMBasisInCatalog { get; set; }
+		public virtual UnitType SecondSizeUOMBasisInCatalog { get; set; }
 		public int PDSModifier { get; set; }
 		public float PreferredPipeLength { get; set; }
 		public string PipingNote1 { get; set; }

@@ -85,6 +85,7 @@
     <Compile Include="Codelists\ClampRequirement.cs" />
     <Compile Include="Codelists\FlangeFaceSurfaceFinish.cs" />
     <Compile Include="Codelists\FlowDirection.cs" />
+    <Compile Include="Codelists\PipingSpecStatus.cs" />
     <Compile Include="Codelists\ValveOperatorIsRotatable.cs" />
     <Compile Include="Codelists\ValveTrim.cs" />
     <Compile Include="Codelists\CoatingType.cs" />
@@ -157,13 +158,9 @@
     <Compile Include="MaterialClass\Piping\PipeNominalDiameters.cs" />
     <Compile Include="MaterialClass\Piping\PipingCommodityFilter.cs" />
     <Compile Include="MaterialClass\Piping\PipingMaterialsClassData.cs" />
-    <Compile Include="Migrations\201706061040026_Init.cs" />
-    <Compile Include="Migrations\201706061040026_Init.Designer.cs">
-      <DependentUpon>201706061040026_Init.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201706081231561_save.cs" />
-    <Compile Include="Migrations\201706081231561_save.Designer.cs">
-      <DependentUpon>201706081231561_save.cs</DependentUpon>
+    <Compile Include="Migrations\201706161220425_init.cs" />
+    <Compile Include="Migrations\201706161220425_init.Designer.cs">
+      <DependentUpon>201706161220425_init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -182,11 +179,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201706061040026_Init.resx">
-      <DependentUpon>201706061040026_Init.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201706081231561_save.resx">
-      <DependentUpon>201706081231561_save.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201706161220425_init.resx">
+      <DependentUpon>201706161220425_init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
