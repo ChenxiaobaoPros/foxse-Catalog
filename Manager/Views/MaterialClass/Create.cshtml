@@ -52,14 +52,25 @@
 							break;
 					}
 					<div class="form-group">
-						@if (prop.CustomAttributes.Where(a => a.AttributeType.Name == "NotMappedAttribute").Count() > 0)
-						{
-							@Html.ActionLink(prop.Name, "", "", new { }, new { @class = "control-label col-md-3" })
-						}
-						else
-						{
-							@Html.Label(prop.Name, htmlAttributes: new { @class = "control-label col-md-3" })
-						}
+						@*@if (prop.CustomAttributes.Where(a => a.AttributeType.Name == "NotMappedAttribute").Count() > 0)
+							{
+								string desc = "";
+								var res = prop.CustomAttributes.Where(a => a.AttributeType.Name == "DisplayAttribute").FirstOrDefault();
+								if (res != null && res.NamedArguments.Count > 0)
+								{
+									desc = res.NamedArguments[0].TypedValue.Value.ToString();
+									var spl = desc.Split('=');
+									<a href="@desc" target="_blank" class="control-label col-md-3" title="@((spl.Length > 1)?spl[1]: "Not mapped")">@prop.Name</a>
+								}
+								else
+								{
+									@Html.Label(prop.Name, htmlAttributes: new { @class = "control-label col-md-3" })
+								}
+							}
+							else
+							{*@
+						@Html.Label(prop.Name, htmlAttributes: new { @class = "control-label col-md-3" })
+						@*}  *@
 						<div class="col-md-9">
 							<input class="form-control" type="@inputType" @step name="@prop.Name" value="@val" />
 						</div>
@@ -72,6 +83,15 @@
 						@Html.Label(prop.Name, htmlAttributes: new { @class = "control-label col-md-3" })
 						<div class="col-md-9">
 							<a class="btn btn-info" title="Select">@val</a>
+						</div>
+					</div>
+				}
+				else
+				{
+					<div class="form-group">
+						@Html.Label(prop.Name, htmlAttributes: new { @class = "control-label col-md-3" })
+						<div class="col-md-9">
+							<input class="form-control" name="@prop.Name" value="@val" />
 						</div>
 					</div>
 				}

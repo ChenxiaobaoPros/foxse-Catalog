@@ -85,6 +85,7 @@
     <Compile Include="Codelists\ClampRequirement.cs" />
     <Compile Include="Codelists\FlangeFaceSurfaceFinish.cs" />
     <Compile Include="Codelists\FlowDirection.cs" />
+    <Compile Include="Codelists\PipingSpecStatus.cs" />
     <Compile Include="Codelists\ValveOperatorIsRotatable.cs" />
     <Compile Include="Codelists\ValveTrim.cs" />
     <Compile Include="Codelists\CoatingType.cs" />
@@ -169,6 +170,18 @@
     <Compile Include="Migrations\201706150743197_save1.Designer.cs">
       <DependentUpon>201706150743197_save1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201706160652041_save2.cs" />
+    <Compile Include="Migrations\201706160652041_save2.Designer.cs">
+      <DependentUpon>201706160652041_save2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201706160742156_update_piping.cs" />
+    <Compile Include="Migrations\201706160742156_update_piping.Designer.cs">
+      <DependentUpon>201706160742156_update_piping.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201706160815010_update_piping1.cs" />
+    <Compile Include="Migrations\201706160815010_update_piping1.Designer.cs">
+      <DependentUpon>201706160815010_update_piping1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Specification\BoltExtension.cs" />
@@ -194,6 +207,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201706150743197_save1.resx">
       <DependentUpon>201706150743197_save1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706160652041_save2.resx">
+      <DependentUpon>201706160652041_save2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706160742156_update_piping.resx">
+      <DependentUpon>201706160742156_update_piping.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706160815010_update_piping1.resx">
+      <DependentUpon>201706160815010_update_piping1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

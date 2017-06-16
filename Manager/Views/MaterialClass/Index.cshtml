@@ -16,7 +16,7 @@
 	<tr>
 		@foreach (var item in type.GetProperties())
 		{
-			if (item.PropertyType.Namespace.Contains("Codelists") || item.PropertyType.Namespace.Contains("System") || item.PropertyType.Name == "UnitType")
+			//if (item.PropertyType.Namespace.Contains("CatalogModel") || item.PropertyType.Namespace.Contains("System") || item.PropertyType.Name == "UnitType")
 			{
 				<th class="vertical">
 					<div>@Html.DisplayName(item.Name)</div>
@@ -39,28 +39,37 @@
 				{
 					<td>
 						@{
-							var val = (ICodelist)value;
 							if (value == null)
 							{
-								Html.Label("");
+								@Html.Label("")
 							}
 							else
 							{
-								Html.Label(val.ID.ToString(), htmlAttributes: new { @title = val.ShortDescription });
+								var val = (ICodelist)value;
+								@Html.Label(val.ID.ToString(), htmlAttributes: new { @title = val.ShortDescription })
 							}
 						}
 					</td>
-					}
+							}
 							else if (prop.PropertyType.Namespace.Contains("System") || prop.PropertyType.Name == "UnitType")
 							{
 								<td>
 									@Html.Label((value == null) ? "" : value.ToString())
 								</td>
-								}
-
-
 							}
-			<td>
+							else
+							{
+								string vall = "";
+								if (value != null)
+								{
+									vall = value.GetType().GetProperty(prop.Name).GetValue(value).ToString();
+								}
+								<td>
+									@Html.Label(vall)
+								</td>
+							}
+				}
+<td>
 				@Html.ActionLink("Edit", "Edit", new { id = itemID, tn = type.Name })
 				@Html.ActionLink("Details", "Details", new { id = itemID, tn = type.Name })
 				@Html.ActionLink("Delete", "Delete", new { id = itemID, tn = type.Name })

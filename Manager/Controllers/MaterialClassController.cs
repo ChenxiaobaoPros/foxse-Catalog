@@ -70,24 +70,59 @@ namespace Manager.Controllers
 			{
 				var itemType = item.PropertyType;
 
+				var val = item.GetValue(obj);
+
+
 				if (/*item.IsVirtual && */itemType.GetInterface("ICodelist") != null)
 				{
-					var val = item.GetValue(obj);
-
 					var set = db.Set(itemType);
 					var sli = new List<SelectListItem>();
+
+					var groups = new Dictionary<int, SelectListGroup>();
+
 					foreach (ICodelist i in set)
 					{
-						sli.Add(new SelectListItem()
+						var li = new SelectListItem()
 						{
 							Selected = (val == i),
 							Text = i.LongDescription,
 							Value = i.ID.ToString()
-						});
+						};
+
+						if (i.Parent != null) {
+							if (!groups.ContainsKey(i.Parent.ID))
+							{
+								groups.Add(i.Parent.ID, new SelectListGroup() { Name = (i.Parent.LongDescription == null)?i.Parent.ShortDescription : i.Parent.LongDescription });
+							}
+							li.Group = groups[i.Parent.ID];
+						}
+
+						sli.Add(li);
 					}
+
 					if (!selects.ContainsKey(itemType.Name))
 						selects.Add(itemType.Name, sli);
 				}
+				else if (item.PropertyType.Namespace.Contains("CatalogModel"))
+				{
+					var set = db.Set(itemType);
+					var sli = new List<SelectListItem>();
+
+					foreach (var i in set)
+					{
+						sli.Add(new SelectListItem()
+						{
+							Selected = (val == i),
+							Text = itemType.GetProperty(item.Name).GetValue(i).ToString(),
+							Value = itemType.GetProperty("ID").GetValue(i).ToString(),
+						});
+					}
+
+					if (!selects.ContainsKey(itemType.Name))
+						selects.Add(itemType.Name, sli);
+				}
+
+
 			}
 			return selects;
 		}
@@ -112,7 +147,7 @@ namespace Manager.Controllers
 				foreach (var item in type.GetProperties().Where(p => p.CanWrite))
 				{
 					var ipt = item.PropertyType;
-					if (ipt.GetInterface("ICodelist") != null)
+					if (ipt.GetInterface("ICodelist") != null || ipt.Namespace.Contains("CatalogModel."))
 					{
 						int parsed = 0;
 						if (int.TryParse(Request.Form[item.Name], out parsed))
@@ -231,7 +266,7 @@ namespace Manager.Controllers
 				foreach (var item in type.GetProperties().Where(p => p.CanWrite))
 				{
 					var ipt = item.PropertyType;
-					if (ipt.GetInterface("ICodelist") != null)
+					if (ipt.GetInterface("ICodelist") != null || ipt.Namespace.Contains("CatalogModel."))
 					{
 						int parsed = 0;
 						if (int.TryParse(Request.Form[item.Name], out parsed))
