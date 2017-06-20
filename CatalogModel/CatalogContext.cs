@@ -12,7 +12,8 @@ namespace CatalogModel
 {
 	public class CatalogContext : DbContext
 	{
-		public CatalogContext() : base("name=VNPSourceCatalogData")
+	//	public CatalogContext() : base("name=VNPSourceCatalogData")
+		public CatalogContext() : base("name=FOXSourceCatalogData")
         {
 		}
 
