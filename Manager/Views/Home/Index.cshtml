@@ -22,14 +22,14 @@
 								<h3>@g3.Key</h3>
 								foreach (var nam in g3.OrderBy(n => n[n.Length - 1]))
 								{
-									<a href="/@g2.Key?n=@nam[nam.Length - 1]">@nam[nam.Length - 1]</a><br>
+									<a href="/@g2.Key.Replace("Catalog","MaterialClass")?n=@nam[nam.Length - 1]">@nam[nam.Length - 1]</a><br>
 								}
 							}
 							break;
 						}
 						else
 						{
-							<a href="/@g2.Key?n=@name[name.Length - 1]">@name[name.Length - 1]</a><br>
+							<a href="/@g2.Key.Replace("Specification", "MaterialClass")?n=@name[name.Length - 1]">@name[name.Length - 1]</a><br>
 						}
 					}
 				</div>
