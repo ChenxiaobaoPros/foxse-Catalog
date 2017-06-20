@@ -151,6 +151,7 @@ namespace Manager.Controllers
 				{
 					var keys = new object[] { int.Parse(n[1]) };
 					result = (ICodelist)db.Set(type).Find(keys);
+					var par = result.Parent;
 				}
 			}
 
